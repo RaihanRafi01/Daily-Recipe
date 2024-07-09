@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:meals/models/meal.dart';
@@ -18,12 +19,19 @@ class MealDetailsScreen extends ConsumerWidget{
         ScaffoldMessenger.of(context).clearSnackBars();
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(wasAdded? '${meal.title} is added as a favorite' : '${meal.title} is no longer as a favorite')));
         },
-          icon:  Icon(isFavorite ? Icons.star : Icons.star_border,color: Colors.redAccent,))],
+          icon: AnimatedSwitcher(
+            duration: Duration(milliseconds: 500),
+            transitionBuilder: (child,animation){
+            return RotationTransition(turns: Tween(begin: 0.8,end: 1.0).animate(animation),child: child,);
+            },
+              child: Icon(isFavorite ? Icons.star : Icons.star_border,color: Colors.redAccent,key: ValueKey(isFavorite),)
+          ))],
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
-            Image.network(meal.imageUrl,width: double.infinity,height: 300,fit: BoxFit.cover,),
+            Hero(tag: meal.id,
+                child: Image.network(meal.imageUrl,width: double.infinity,height: 300,fit: BoxFit.cover,)),
             SizedBox(height: 14),
             Text(meal.title,style: Theme.of(context).textTheme.titleLarge!.copyWith(
               color: Theme.of(context).colorScheme.primary,fontWeight: FontWeight.bold
